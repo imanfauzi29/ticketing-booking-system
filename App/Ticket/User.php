@@ -20,15 +20,14 @@ class User
 
     private function _validate($user, $pass)
     {
-        $datas = $this->get_user();
+        $data = $this->get_user();
 
-        foreach ($datas as $data) {
-
-            if ($user == $data->username && $pass == $data->password) {
-                // $this->username = $data->username;
-                // $this->session = true;
-
-            }
+        if ($user == $data[0]->username && $pass == $data[0]->password) {
+            // $this->username = $data->username;
+            // $this->session = true;
+            echo "Selamat datang " . $data[0]->username;
+        } else {
+            echo "gagal";
         }
     }
 
