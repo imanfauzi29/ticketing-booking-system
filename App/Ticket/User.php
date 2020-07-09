@@ -26,6 +26,11 @@ class User
             // $this->username = $data->username;
             // $this->session = true;
             echo "Selamat datang " . $data[0]->username;
+            if ($data[0]->role == 1) {
+                // redirect admin
+            }else {
+                // redirect customer
+            }
         } else {
             echo "gagal";
         }
