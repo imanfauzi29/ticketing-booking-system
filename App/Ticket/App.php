@@ -1,5 +1,6 @@
 <?php
 
+// ini parent
 namespace App\Ticket;
 
 abstract class User
