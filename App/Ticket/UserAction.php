@@ -18,7 +18,7 @@ class Model{
     }
 
     protected function getDataAirport(){
-        $path = '../../data/flight.json';
+        $path = '../../data/airport.json';
         $data = self::getData($path);
         return $data;
     }
@@ -29,6 +29,13 @@ class Model{
         return $data;
     }
 
+    protected function writeDataFlight($data, $new_data){
+        $new_data = json_encode($new_data);
+
+        $path = '../../data/flight.json';
+        $file = fopen($path, 'w');
+        fwrite($file, $new_data);
+    }
     
 }
 
@@ -45,18 +52,18 @@ interface Admin{
 
     public function addMaskapai();
     public function showMaskapai();
-    public function updateMaskapai($id);
-    public function delMaskapai($id);
+    public function updateMaskapai();
+    public function delMaskapai();
 
     public function addAirport();
     public function showAirport();
-    public function updateAirport($id);
-    public function delAirport($id);
+    public function updateAirport();
+    public function delAirport();
 
     public function addSchedule();
     public function showSchedule();
-    public function updateSchedule($id);
-    public function delSchedule($id);
+    public function updateSchedule();
+    public function delSchedule();
 
 }
 
@@ -66,11 +73,13 @@ class UserAction extends Model implements Customer, Admin{
     protected $data_schedule;
     protected $data_flight;
     protected $data_airport;
+    protected $default_img;
 
     function __construct(){
         $this->data_schedule = $this->getDataSchedule();
         $this->data_airport = $this->getDataAirport();
         $this->data_flight = $this->getDataFlight();
+        $this->default_img = 'https://da8hvrloj7e7d.cloudfront.net/imageResource/2015/12/17/1450350710653-f522e35b03adb20da95195584a72713d.png';
     }
 
     function searchAllSchedule(){
@@ -83,24 +92,67 @@ class UserAction extends Model implements Customer, Admin{
     }
 
     function booking(){
-
+        
     }
 
 
     function addMaskapai(){
-        echo "Masukkan data maskapai penerbangan...";
-        
+        $new_data = [];
+        if (True) { //using for validate user session
+            echo "===Masukkan data maskapai===\n";
+            echo "Masukkan kode maskapai : \n";
+            $flight_code = trim(fgets(STDIN));
+            echo "Masukkan nama maskapai : \n";
+            $flight_name = trim(fgets(STDIN));
+
+            $new_data = [
+                "flight_code" => $flight_code,
+                "flight_name" => $flight_name,
+                "flight_image" => $this->default_img
+            ];
+            
+            array_push($this->data_flight, $new_data);
+            // $this->writeDataFlight($new_data);
+            return $this->data_flight;
+            
+
+        }
+    
 
     }
 
     function showMaskapai(){
 
-    }
-    function updateMaskapai($id){
+        if (TRUE){ // validate user
+            
+            echo "Flight Code|\t Flight Name|";
+            for ($i = 0; $i < count($this->data_flight); $i++){
+                if ($this->data_flight[$i]){
+                    echo $this->data_flight[$i]["flight_code"] . "|\t " . $this->data_flight[$i]["flight_name"]. "\n";
+    
+                 }
+            }
+        }
 
     }
-    function delMaskapai($id){
+    function updateMaskapai(){
+        echo "Masukkan id yang ingin diupdate :";
 
+    }
+    function delMaskapai(){
+        if (True){//user validate will implement tomorrow
+            echo "Masukkan flight code : ";
+            $flight_code = trim(fgets(STDIN));
+            $index = 0;
+            for ($i = 0; $i < count($this->data_flight); $i++){
+                if ($this->data_flight[$i]["flight_code"] == $flight_code){
+                    $index = $i;
+                }
+            }
+            unset($this->data_flight[$index]);
+
+            return $this->data_flight;
+        }
     }
 
     function addAirport(){
@@ -109,10 +161,10 @@ class UserAction extends Model implements Customer, Admin{
     function showAirport(){
 
     }
-    function updateAirport($id){
+    function updateAirport(){
 
     }
-    function delAirport($id){
+    function delAirport(){
 
     }
 
@@ -122,10 +174,10 @@ class UserAction extends Model implements Customer, Admin{
     function showSchedule(){
 
     }
-    function updateSchedule($id){
+    function updateSchedule(){
 
     }
-    function delSchedule($id){
+    function delSchedule(){
 
     }
 
@@ -133,4 +185,6 @@ class UserAction extends Model implements Customer, Admin{
 
 
 $test = new UserAction();
-$test->searchAllSchedule();
+// $test->addMaskapai();
+// $test->showMaskapai();
+$test->delMaskapai();
