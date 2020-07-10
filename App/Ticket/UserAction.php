@@ -32,9 +32,8 @@ class Model
         return $data;
     }
 
-    protected function update($path ,$new_data){
+    protected function pushData($path ,$new_data){
         $json = json_encode($new_data, JSON_PRETTY_PRINT);
-        
         file_put_contents($path, $json);
     }
 }
@@ -115,7 +114,7 @@ class UserAction extends Model implements Customer, Admin
 
             array_push($this->data_flight, $new_data);
             print_r($new_data);
-            $this->update('../../data/flight.json', $this->data_flight);
+            $this->pushData('../../data/flight.json', $this->data_flight);
 
             // return $this->data_flight;
 
@@ -127,12 +126,12 @@ class UserAction extends Model implements Customer, Admin
 
         if (TRUE) { // validate user
 
-            echo "Flight Code|\t Flight Name|";
             for ($i = 0; $i < count($this->data_flight); $i++) {
                 if ($this->data_flight[$i]) {
                     echo $this->data_flight[$i]["flight_code"] . "|\t " . $this->data_flight[$i]["flight_name"] . "\n";
                 }
             }
+
         }
     }
 
@@ -241,29 +240,112 @@ class UserAction extends Model implements Customer, Admin
         }
     }
 
-    function addSchedule(){
-        print_r($this->data_schedule);
-        die();
-        for ($i = 0; $i < count($this->data_schedule); $i++){
-            if ($this->data_schedule[$i]){
-                
-            }
-        }
+    function setDataSchedule(){
+        echo "Add new schedule flight: ";
+        echo "Add flight code :";
+        $flight_code = fget(STDIN);
+        echo "\Flight name: "; 
+        $flight_name = fgets(STDIN);
+        echo "\nFlight from: ";
+        $flight_from = fgets(STDIN);
+        echo "Flight to: ";
+        $flight_to = fget(STDIN);
+        echo "Flight route: [from-to]";
+        $flight_route = fget(STDIN);
+        echo "Flight transit: ";
+        $flight_transit = fget(STDIN);
+        echo "Flight datetime: ";
+        $flight_datetime = fget(STDIN);
+        echo "Flight price: ";
+        $flight_price = fget(STDIN);
+        echo "FLight publishfare ( 1 - 10 )";
+        $flight_publishfare = int(fget(STDIN));
+        echo "Flight baggage: ";
+        $flight_baggage = fget(STDIN);
+        echo "Flight facilities: ";
+        $flight_facilities = fget(STDIN);
+
+        $data = [
+                "flight" => $flight_name,
+                "flight_code" => $flight_code,
+                "flight_from" => $flight_from,
+                "flight_to" => $flight_to,
+                "flight_route" => $flight_route,
+                "flight_date" => $flight_date,
+                "flight_transit" => $flight_transit,
+                "flight_datetime" => $flight_datetime,
+                "flight_price" => $flight_price,
+                "flight_publishfare" => $flight_publishfare,
+                "flight_baggage" => $flight_baggage,
+                "flight_facilities" => $flight_facilities
+        ];
+
+        return $data;
     }
-    function delAirport($id)
-    { }
+
+
+    function addSchedule(){
+        // clear terminal
+        system('cls');
+        $data = self::setDataSchedule();
+
+        array_push($this->schedule, $data);
+        $this->pushData($this->schedule);
+
+    }
+
+    function delAirport($id){
+
+    }
 
     function showSchedule()
-    { }
+    {
+
+        $mask = "|%-11s |%-11s |%-13s |%-13s |%-13s |%-13s |%-13s \n";
+        printf($mask, '-----------', '-----------', '-------------', '-------------', '-------------', '-------------', '-------------');
+        printf($mask, 'Flight Name', 'Flight code', 'Flight route', 'Flight date', 'Keberangkatan', 'Price', 'Baggage');
+        printf($mask, '-----------', '-----------', '-------------', '-------------', '-------------', '-------------', '-------------');
+
+        foreach ($this->data_schedule as $sch) {
+            printf($mask, $sch['flight'], $sch['flight_code'], $sch['flight_route'], $sch['flight_date'], $sch['flight_datetime'], $sch["flight_price"], $sch['flight_baggage']);
+        }
+        printf($mask, '-----------', '-----------', '-------------', '-------------', '-------------', '-------------', '-------------');
+
+    }
     function updateSchedule()
-    { }
+    { 
+        $data = $this->data_schedule;
+        self::showSchedule();
+        echo "Masukkan Flight Code yang ingin diubah : ";
+        $flight_code = fget(STDIN);
+
+        $data_found = array_filter($data, function($v) use($flight_code){return $v['flight_code'] == $flight_code;});
+
+        if (count($data_found) > 0){
+            
+            for ($i = 0; $i < count($data); $i++){
+                if ($data[$i]["flight_code"] == $flight_code){
+                    
+                }
+            }
+        }
+
+
+    }
     function delSchedule()
-    { }
+    { 
+        
+
+    }
     
 }
 
 $test = new UserAction();
-$test->addMaskapai();
+// $test->addMaskapai();
 
 // $test->addSchedule();
 // $test->addMaskapai();
+// $test->showMaskapai();
+// $test->delMaskapai();
+// $test->showSchedule();
+$test->updateSchedule();
