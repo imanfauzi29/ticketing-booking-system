@@ -1,1 +1,46 @@
-null
+
+[
+    {
+        "flight": "AirAsia",
+        "flight_code": "QZ7682",
+        "flight_from": "CGK",
+        "flight_to": "SUB",
+        "flight_route": "CGK-SUB",
+        "flight_date": "2016-06-08",
+        "flight_transit": "Nonstop",
+        "flight_datetime": "08:45 -10:00",
+        "flight_price": "350000",
+        "flight_publishfare": 0,
+        "flight_baggage": "15Kg",
+        "flight_facilities": "-"
+    },
+    {
+        "flight": "Lion Air",
+        "flight_code": "JT690",
+        "flight_from": "CGK",
+        "flight_to": "SUB",
+        "flight_route": "CGK-SUB",
+        "flight_date": "2016-06-08",
+        "flight_transit": "Nonstop",
+        "flight_datetime": "05:00 -06:30",
+        "flight_price": "440000",
+        "flight_publishfare": "385000",
+        "flight_baggage": "20 Kg",
+        "flight_facilities": "-"
+    },
+    {
+        "flight": "Lion Air",
+        "flight_code": "JT748",
+        "flight_from": "CGK",
+        "flight_to": "SUB",
+        "flight_route": "CGK-SUB",
+        "flight_date": "2016-06-08",
+        "flight_transit": "Nonstop",
+        "flight_datetime": "06:00 -07:30",
+        "flight_price": "440000",
+        "flight_publishfare": "385000",
+        "flight_baggage": "20 Kg",
+        "flight_facilities": "-"
+    }
+]
+
