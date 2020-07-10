@@ -4,6 +4,7 @@ namespace App\Ticket;
 // model for test class sebelum dipisah-pisah
 class Model
 {
+
     protected function getDataFlight()
     {
         $path = '../../data/flight.json';
@@ -32,9 +33,10 @@ class Model
         return $data;
     }
 
-    protected function update($path ,$new_data){
+    protected function update($path, $new_data)
+    {
         $json = json_encode($new_data, JSON_PRETTY_PRINT);
-        
+
         file_put_contents($path, $json);
     }
 }
@@ -54,8 +56,8 @@ interface Admin
 
     public function addMaskapai();
     public function showMaskapai();
-    public function updateMaskapai();
-    public function delMaskapai();
+    public function updateMaskapai($id, $data);
+    public function delMaskapai($id);
 
     public function addAirport();
     public function showAirport();
@@ -77,7 +79,8 @@ class UserAction extends Model implements Customer, Admin
     protected $data_airport;
     protected $default_img;
 
-    function __construct(){
+    function __construct()
+    {
         $this->data_schedule = $this->getDataSchedule();
         $this->data_airport = $this->getDataAirport();
         $this->data_flight = $this->getDataFlight();
@@ -103,44 +106,89 @@ class UserAction extends Model implements Customer, Admin
         if (True) { //using for validate user session
             echo "===Masukkan data maskapai===\n";
             echo "Masukkan kode maskapai : ";
-            $flight_code = trim(fgets(STDIN));
+            $flight_code = strtoupper(trim(fgets(STDIN)));
             echo "Masukkan nama maskapai : ";
             $flight_name = trim(fgets(STDIN));
 
+            $fCode = '';
+            foreach ($this->data_flight as $value) {
+
+                if ($flight_code == $value['flight_code']) {
+
+                    echo "Oops, Flight Code sudah ada!\n\n";
+                    sleep(1);
+                    $res = $this->prompt();
+
+                    if ($res == 'Y') {
+                        return $this->addMaskapai();
+                    } elseif ($res == 'N') {
+                        echo "Anda akan keluar!\n";
+                        sleep(1);
+                        echo "Good Bye!";
+                        sleep(1);
+                        system('clear');
+                        return;
+                    } else {
+                        return;
+                    }
+
+                    return;
+                } else {
+                    $fCode = $flight_code;
+                }
+            }
+
             $new_data = [
-                "flight_code" => $flight_code,
+                "flight_code" => $fCode,
                 "flight_name" => $flight_name,
                 "flight_image" => $this->default_img
             ];
 
             array_push($this->data_flight, $new_data);
-            print_r($new_data);
+
             $this->update('../../data/flight.json', $this->data_flight);
 
-            // return $this->data_flight;
-
+            echo "data Added!\n";
+            return $this->data_flight;
         }
     }
 
     function showMaskapai()
     {
 
-        if (TRUE) { // validate user
+        $mask = "|%11s |%-30.30s |\n";
 
-            echo "Flight Code|\t Flight Name|";
-            for ($i = 0; $i < count($this->data_flight); $i++) {
-                if ($this->data_flight[$i]) {
-                    echo $this->data_flight[$i]["flight_code"] . "|\t " . $this->data_flight[$i]["flight_name"] . "\n";
-                }
-            }
+        printf($mask, '-----------', '------------------------------');
+        printf($mask, 'Flight Code', 'Flight name');
+        printf($mask, '-----------', '------------------------------');
+        foreach ($this->data_flight as $flight) {
+            printf($mask, $flight['flight_code'], $flight['flight_name']);
+        }
+
+        printf($mask, '-----------', '------------------------------');
+
+        $code = $this->getCode("flight");
+        switch ($code[1]) {
+            case '1':
+                $this->addMaskapai();
+                break;
+            case '2':
+                echo "\nedit: ";
+                $data = fgets(STDIN);
+                $this->updateMaskapai()($code[0], $data);
+                break;
+            case '3':
+                $this->delMaskapai($code[0]);
+                break;
+            default:
+                echo "please";
+                break;
         }
     }
 
-    function updateMaskapai(){
-
-        echo "Masukkan id yang ingin diupdate :";
-    }
-    function delMaskapai()
+    function updateMaskapai($id, $data)
+    { }
+    function delMaskapai($id)
     {
         if (True) { //user validate will implement tomorrow
             echo "Masukkan flight code : ";
@@ -201,27 +249,19 @@ class UserAction extends Model implements Customer, Admin
         }
         printf($mask, '-----------', '-----------------------------------------');
 
-        echo "\nmasukan Flight Code: ";
-        $code = strtoupper(trim(fgets(STDIN)));
-        echo "\nAction menu: ";
-        echo "\n";
-        echo "1. Add\n";
-        echo "2. Update\n";
-        echo "3. Delete\n\n";
-        echo "pilih action: ";
-        $menu = trim(fgets(STDIN));
+        $code = $this->getCode("Airport");
 
-        switch ($menu) {
+        switch ($code[1]) {
             case '1':
                 $this->addAirport();
                 break;
             case '2':
                 echo "\nedit: ";
                 $data = fgets(STDIN);
-                $this->updateAirport($code, $data);
+                $this->updateAirport($code[0], $data);
                 break;
             case '3':
-                $this->delAirport($code);
+                $this->delAirport($code[0]);
                 break;
             default:
                 echo "please";
@@ -239,16 +279,9 @@ class UserAction extends Model implements Customer, Admin
                 echo "Gagal Update";
             }
         }
-    }
 
-    function addSchedule(){
-        print_r($this->data_schedule);
-        die();
-        for ($i = 0; $i < count($this->data_schedule); $i++){
-            if ($this->data_schedule[$i]){
-                
-            }
-        }
+        $this->update($this->airport, $airport);
+        echo "update Berhasil!";
     }
     function delAirport($id)
     { }
@@ -259,11 +292,37 @@ class UserAction extends Model implements Customer, Admin
     { }
     function delSchedule()
     { }
-    
+
+    function getCode($flight)
+    {
+        echo "\nAction menu: ";
+        echo "\n";
+        echo "1. Add\n";
+        echo "2. Update\n";
+        echo "3. Delete\n\n";
+        echo "pilih action: ";
+        $menu = trim(fgets(STDIN));
+
+        $code = '';
+        if ($menu != 1) {
+            echo "\nmasukan $flight Code: ";
+            $code = strtoupper(trim(fgets(STDIN)));
+        }
+
+        $arr = [];
+        $arr[] = $code;
+        $arr[] = $menu;
+
+        return $arr;
+    }
+
+    function prompt()
+    {
+        echo "Ulangi Lagi (Y/n) ? ";
+        $again = strtoupper(trim(fgets(STDIN)));
+        return $again;
+    }
 }
 
 $test = new UserAction();
-$test->addMaskapai();
-
-// $test->addSchedule();
-// $test->addMaskapai();
+$test->showMaskapai();
