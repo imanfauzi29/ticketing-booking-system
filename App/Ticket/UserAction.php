@@ -4,7 +4,6 @@ namespace App\Ticket;
 // model for test class sebelum dipisah-pisah
 class Model
 {
-
     protected function getDataFlight()
     {
         $path = '../../data/flight.json';
@@ -14,8 +13,7 @@ class Model
 
     protected function getData($path)
     {
-        $file = fopen($path, 'r');
-        $json = fread($file, filesize($path));
+        $json = file_get_contents($path);
         $data = json_decode($json, true);
         return $data;
     }
@@ -34,11 +32,10 @@ class Model
         return $data;
     }
 
-    protected function writeDataFlight($new_data){
-
-        $path = '../../data/flight.json';
-
-        file_put_contents($path, $new_data);
+    protected function update($path ,$new_data){
+        $json = json_encode($new_data, JSON_PRETTY_PRINT);
+        
+        file_put_contents($path, $json);
     }
 }
 
@@ -80,8 +77,7 @@ class UserAction extends Model implements Customer, Admin
     protected $data_airport;
     protected $default_img;
 
-    function __construct()
-    {
+    function __construct(){
         $this->data_schedule = $this->getDataSchedule();
         $this->data_airport = $this->getDataAirport();
         $this->data_flight = $this->getDataFlight();
@@ -119,10 +115,9 @@ class UserAction extends Model implements Customer, Admin
 
             array_push($this->data_flight, $new_data);
             print_r($new_data);
-            $this->writeDataFlight($this->data_flight);
-            // $this->writeDataFlight($new_data);
+            $this->update('../../data/flight.json', $this->data_flight);
 
-            return $this->data_flight;
+            // return $this->data_flight;
 
         }
     }
@@ -244,22 +239,31 @@ class UserAction extends Model implements Customer, Admin
                 echo "Gagal Update";
             }
         }
-        echo "update Berhasil!";
-        file_put_contents('../../data/airport.json', $airport);
+    }
+
+    function addSchedule(){
+        print_r($this->data_schedule);
+        die();
+        for ($i = 0; $i < count($this->data_schedule); $i++){
+            if ($this->data_schedule[$i]){
+                
+            }
+        }
     }
     function delAirport($id)
     { }
 
-    function addSchedule()
-    { }
     function showSchedule()
     { }
     function updateSchedule()
     { }
     function delSchedule()
     { }
+    
 }
 
-
 $test = new UserAction();
+$test->addMaskapai();
 
+// $test->addSchedule();
+// $test->addMaskapai();
