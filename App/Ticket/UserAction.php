@@ -4,6 +4,11 @@ namespace App\Ticket;
 // model for test class sebelum dipisah-pisah
 class Model
 {
+    public $path;
+    public function __construct()
+    {
+        $this->airport = "../../data/airport.json";
+    }
 
     protected function getDataFlight()
     {
@@ -34,13 +39,11 @@ class Model
         return $data;
     }
 
-    protected function writeDataFlight($data, $new_data)
+    protected function update($path, $new_data)
     {
-        $new_data = json_encode($new_data);
+        $new_data = json_encode($new_data, JSON_PRETTY_PRINT);
 
-        $path = '../../data/flight.json';
-        $file = fopen($path, 'w');
-        fwrite($file, $new_data);
+        file_put_contents($path, $new_data);
     }
 }
 
@@ -241,8 +244,9 @@ class UserAction extends Model implements Customer, Admin
                 echo "Gagal Update";
             }
         }
+
+        $this->update($this->airport, $airport);
         echo "update Berhasil!";
-        file_put_contents('../../data/airport.json', $airport);
     }
     function delAirport($id)
     { }
