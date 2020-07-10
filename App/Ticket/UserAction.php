@@ -29,12 +29,10 @@ class Model{
         return $data;
     }
 
-    protected function writeDataFlight($data, $new_data){
-        $new_data = json_encode($new_data);
-
+    protected function writeDataFlight($new_data){
         $path = '../../data/flight.json';
-        $file = fopen($path, 'w');
-        fwrite($file, $new_data);
+
+        file_put_contents($path, $new_data);
     }
     
 }
@@ -100,9 +98,9 @@ class UserAction extends Model implements Customer, Admin{
         $new_data = [];
         if (True) { //using for validate user session
             echo "===Masukkan data maskapai===\n";
-            echo "Masukkan kode maskapai : \n";
+            echo "Masukkan kode maskapai : ";
             $flight_code = trim(fgets(STDIN));
-            echo "Masukkan nama maskapai : \n";
+            echo "Masukkan nama maskapai : ";
             $flight_name = trim(fgets(STDIN));
 
             $new_data = [
@@ -112,8 +110,10 @@ class UserAction extends Model implements Customer, Admin{
             ];
             
             array_push($this->data_flight, $new_data);
+            print_r($new_data);
+            $this->writeDataFlight($this->data_flight);
             // $this->writeDataFlight($new_data);
-            return $this->data_flight;
+            // return $this->data_flight;
             
 
         }
@@ -135,6 +135,7 @@ class UserAction extends Model implements Customer, Admin{
         }
 
     }
+
     function updateMaskapai(){
         echo "Masukkan id yang ingin diupdate :";
 
@@ -170,6 +171,12 @@ class UserAction extends Model implements Customer, Admin{
 
     function addSchedule(){
 
+        for ($i = 0; $i < count($this->data_schedule); $i++){
+            if ($this->data_schedule[$i]){
+                
+            }
+        }
+
     }
     function showSchedule(){
 
@@ -185,6 +192,8 @@ class UserAction extends Model implements Customer, Admin{
 
 
 $test = new UserAction();
-// $test->addMaskapai();
+// $test->addAirport();
+// $test->searchAllSchedule();
+$test->addMaskapai();
 // $test->showMaskapai();
-$test->delMaskapai();
+// $test->delMaskapai();
